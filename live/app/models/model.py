@@ -138,11 +138,13 @@ class Notification(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     userId = Column(Integer, ForeignKey("susers.id"))
     message = Column(String, nullable=False)
+    processed = Column(Integer, nullable=False)
 
-    def __init__(self, userId, message):
+    def __init__(self, userId, message, processed=0):
         super().__init__()
         self.userId = userId
         self.message = message
+        self.processed = processed
 
 
 if __name__ == "__main__":
