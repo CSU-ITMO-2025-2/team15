@@ -1,24 +1,24 @@
 from live.app.models.model import User
-from live.app.database.database import session
+from live.app.database.database import get_session
 
 
 def get_user_by_id(id: int):
-    with session() as session:
+    with get_session() as session:
         return session.query(User).where(User.id == id)
 
 
 def get_user_login(login: str):
-    with session() as session:
+    with get_session() as session:
         return session.query(User).where(User.login == login)
 
 
 def get_user_email(email: str) -> User:
-    with session() as session:
+    with get_session() as session:
         return session.query(User).where(User.email == email)
 
 
 def __add_user(login: str, email: str, user_type: str):
-    with session() as session:
+    with get_session() as session:
         user = User(login=login, email=email, type=user_type)
         session.begin()
         session.save(user)

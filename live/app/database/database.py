@@ -15,6 +15,6 @@ def conn():
     SQLModel.metadata.create_all(engine)
 
 
-def session():
+def get_session():
     with Session(engine) as session:
         yield session

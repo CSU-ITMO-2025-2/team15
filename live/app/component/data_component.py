@@ -3,9 +3,9 @@ from live.app.database.database import get_session
 from live.app.models.model import Data
 
 
-def upload_data(data: DataFrame):
+def upload_data(path2data: str):
     with get_session() as session:
-        data = Data(data)
+        data = Data(path2data=path2data)
         session.save(data)
         session.commit()
 

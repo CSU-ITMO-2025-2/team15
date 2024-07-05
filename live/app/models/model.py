@@ -58,12 +58,10 @@ class Transaction(Base):
 class Data(Base):
     __tablename__ = "data"
     id = Column(Integer, primary_key=True, nullable=False)
-    data = Column(LargeBinary, nullable=False)
-    data_params = Column(String, nullable=False)
+    path2data = Column(String, nullable=False)
 
-    def __init__(self, data, data_params):
-        self.data = data
-        self.data_params = data_params
+    def __init__(self, path2data):
+        self.path2data = path2data
 
 
 class Model(Base):

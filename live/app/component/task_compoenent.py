@@ -1,14 +1,47 @@
-from pandas import DataFrame
+from live.app.database.database import get_session
+from live.app.models.model import Task
+from datetime import datetime
 
 
-def add_task():
-    pass
+def add_task(
+        transaction_id: int,
+        userid: int,
+        dataid: int,
+        modelid: int,
+        status: str = "wait",
+        task_type: str = "default"
+):
+    task = Task(
+        task_type=task_type,
+        transaction_id=transaction_id,
+        userid=userid,
+        dataid=dataid,
+        modelid=modelid,
+        status=status,
+        processing_end=None,
+        processing_start=None
+    )
 
-def set_status():
-    pass
+    with get_session() as session:
+        session.save(task)
+        session.commit()
 
-def run():
-    pass
 
-def final():
-    pass
+def set_status(taskid: int, status: str):
+    with get_session() as session:
+        new_state = {'status': status}
+        session.query(Task).where(Task.id == taskid).update(new_state)
+
+
+def run(taskid: int):
+    with get_session() as session:
+        new_state = {'status': "in_progress", 'processing_start': datetime.now()}
+        session.query(Task).where(Task.id == taskid).update(new_state)
+        session.commit()
+
+
+def final(taskid: int):
+    with get_session() as session:
+        new_state = {'status': "finished", 'processing_end': datetime.now()}
+        session.query(Task).where(Task.id == taskid).update(new_state)
+        session.commit()
