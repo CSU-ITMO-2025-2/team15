@@ -42,11 +42,11 @@ class Transaction(Base):
     datetime = Column(Date, nullable=False)
 
     def __init__(
-        self,
-        userId,
-        operationType,
-        amount,
-        datetime=dtime.now(),
+            self,
+            userId,
+            operationType,
+            amount,
+            datetime=dtime.now(),
     ):
         super().__init__()
         self.userId = userId
@@ -88,20 +88,22 @@ class Task(Base):
     status = Column(String, nullable=False)
 
     def __init__(
-        self,
-        task_type,
-        transaction_id,
-        userid,
-        dataid,
-        processing_start,
-        processing_end,
-        status
+            self,
+            task_type,
+            transaction_id,
+            userid,
+            dataid,
+            modelid,
+            processing_start,
+            processing_end,
+            status
     ):
         super().__init__()
         self.task_type = task_type,
         self.transaction_id = transaction_id
         self.userid = userid
         self.dataid = dataid
+        self.modelid = modelid,
         self.processing_start = processing_start
         self.processing_end = processing_end
         self.status = status
@@ -124,13 +126,13 @@ class History(Base):
             datetime=dtime.now(),
             details=""
     ):
-            super().__init__()
-            self.userid
-            self.userid = userid
-            self.taskid = taskid
-            self.operation_type = operation_type
-            self.datetime = datetime
-            self.details = details
+        super().__init__()
+        self.userid
+        self.userid = userid
+        self.taskid = taskid
+        self.operation_type = operation_type
+        self.datetime = datetime
+        self.details = details
 
 
 class Notification(Base):
