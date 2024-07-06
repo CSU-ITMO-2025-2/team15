@@ -11,4 +11,3 @@ def create_transaction(userid: int, operation_type: str, amount: float):
         )
         result = session.add(transaction)
         session.commit()
-        print(result)

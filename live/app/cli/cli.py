@@ -47,25 +47,26 @@ def check_balance(login: str):
 
 @cli.command()
 @click.option("-l", "--login")
-@click.option("-d", "--path2file", default="/data/demo-user/wine-data.csv")
-@click.option("-m", "--modelid", default=1)
+@click.option("-d", "--path2file", default="/data/demo-client/winequality-red.csv")
+@click.option("-m", "--modelname", default="rfmodel")
+@click.option("-m", "--modelpath", default="/models/rfmodel.plk")
 def add_task(
             login: str,
             path2file: str,
-            modelid: int
+            modelname: str,
+            modelpath: str
 ):
     with get_session() as session:
         user = get_user_by_login(login);
-        data = get_by_path("/data/demo-user/wine-data.csv")
+        data = get_by_path(path2file)
         if data is None:
             upload_data(path2file)
-            data = get_by_path("/data/demo-user/wine-data.csv")
+            data = get_by_path(path2file)
 
-        model = get_model_by_name("rfmodel")
+        model = get_model_by_name(modelname)
         if model is None:
-            save_model("/models/rfmodel.plk", "rfmodel")
-            model = get_model_by_name("rfmodel")
-            print(model)
+            save_model(modelpath, modelname)
+            model = get_model_by_name(modelname)
 
         task = Task(
             task_type="wine-score",
@@ -77,7 +78,6 @@ def add_task(
 
         session.add(task)
         session.commit()
-        print("task has been added")
 
 
 if __name__ == "__main__":

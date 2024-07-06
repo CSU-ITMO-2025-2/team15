@@ -88,7 +88,7 @@ class Task(Base):
     processing_start = Column(Date, nullable=True)
     processing_end = Column(Date)
     status = Column(String, nullable=False)
-    result = Column(Float, nullable=False)
+    result = Column(Float, nullable=True)
 
     def __init__(
             self,
