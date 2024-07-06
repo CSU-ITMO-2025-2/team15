@@ -1,0 +1,160 @@
+from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float
+from database.database import Base, engine
+from datetime import datetime as dtime
+
+
+class User(Base):
+    __tablename__ = "susers"
+    id = Column(Integer, primary_key=True, nullable=False)
+    login = Column(String, unique=True, nullable=False)
+    email = Column(String)
+    role = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+
+    def __init__(self, login, email, role, password: str):
+        super().__init__()
+        self.login = login
+        self.email = email
+        self.role = role
+        self.password = password
+
+
+class Balance(Base):
+    __tablename__ = "balances"
+    id = Column(Integer, primary_key=True, nullable=False)
+    userId = Column(Integer, ForeignKey("susers.id"))
+    value = Column(Float)
+
+    def __init__(self, userId, value):
+        super().__init__()
+        self.userId = userId
+        self.value = value
+
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    userId = Column(Integer, ForeignKey("susers.id"))
+    operationType = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    datetime = Column(Date, nullable=False)
+
+    def __init__(
+            self,
+            userId,
+            operationType,
+            amount,
+            datetime=dtime.now(),
+    ):
+        super().__init__()
+        self.userId = userId
+        self.operationType = operationType
+        self.amount = amount
+        self.datetime = datetime
+
+
+class Data(Base):
+    __tablename__ = "data"
+    id = Column(Integer, primary_key=True, nullable=False)
+    path2data = Column(String, nullable=False)
+
+    def __init__(self, path2data):
+        super().__init__()
+        self.path2data = path2data
+
+
+class Model(Base):
+    __tablename__ = "model"
+    id = Column(Integer, primary_key=True, nullable=False)
+    path2model = Column(String, unique=True, nullable=False)
+    modelname = Column(String, unique=True, nullable=False)
+
+    def __init__(self, modelname, path2model):
+        super().__init__()
+        self.path2model = path2model
+        self.modelname = modelname
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+    id = Column(Integer, primary_key=True, nullable=False)
+    task_type = Column(String, nullable=False)
+    transaction_id = Column(Integer, ForeignKey("transactions.id"))
+    userid = Column(Integer, ForeignKey("susers.id"), nullable=False)
+    dataid = Column(Integer, ForeignKey("data.id"), nullable=False)
+    modelid = Column(Integer, ForeignKey("model.id"), nullable=False)
+    created_at = Column(Date, nullable=False)
+    processing_start = Column(Date, nullable=True)
+    processing_end = Column(Date)
+    status = Column(String, nullable=False)
+    result = Column(Float, nullable=True)
+
+    def __init__(
+            self,
+            userid,
+            dataid,
+            modelid,
+            status="init",
+            task_type="wine-score",
+            transaction_id=None,
+            processing_start=None,
+            processing_end=None,
+            result=None
+    ):
+        super().__init__()
+        self.task_type = task_type,
+        self.transaction_id = transaction_id
+        self.userid = userid
+        self.dataid = dataid
+        self.modelid = modelid,
+        self.processing_start = processing_start
+        self.processing_end = processing_end
+        self.status = status
+        self.created_at = dtime.now()
+        self.result = result
+
+
+class History(Base):
+    __tablename__ = "history"
+    id = Column(Integer, primary_key=True, nullable=False)
+    userid = Column(Integer, ForeignKey("susers.id"), nullable=False)
+    taskid = Column(Integer, ForeignKey("tasks.id"), nullable=False)
+    operation_type = Column(String, nullable=False)
+    datetime = Column(Date, nullable=False)
+    details = Column(String, nullable=True)
+
+    def __init__(
+            self,
+            userid,
+            taskid,
+            operation_type,
+            datetime=dtime.now(),
+            details=""
+    ):
+        super().__init__()
+        self.userid
+        self.userid = userid
+        self.taskid = taskid
+        self.operation_type = operation_type
+        self.datetime = datetime
+        self.details = details
+
+
+class Notification(Base):
+    __tablename__ = "notification"
+    id = Column(Integer, primary_key=True, nullable=False)
+    userId = Column(Integer, ForeignKey("susers.id"))
+    message = Column(String, nullable=False)
+    processed = Column(Integer, nullable=False)
+
+    def __init__(self, userId, message, processed=0):
+        super().__init__()
+        self.userId = userId
+        self.message = message
+        self.processed = processed
+
+
+if __name__ == "__main__":
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)

@@ -8,6 +8,8 @@ services:
       - ./live/app/.env
     volumes:
       - ./live/app:/app
+      - ./source/models:/models/
+      - ./source/data:/data/
     command: python app.py
     depends_on:
       rabbitmq:
