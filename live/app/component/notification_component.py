@@ -1,12 +1,12 @@
 
-from live.app.models.model import Notification
-from live.app.database.database import get_session
+from models.model import Notification
+from database.database import get_session
 
 
 def add_notififcation(userid: int, message):
     with get_session() as session:
         session.begin()
-        session.save(Notification(userId=userid, message=message))
+        session.add(Notification(userId=userid, message=message))
         session.commit()
 
 

@@ -1,14 +1,19 @@
-from live.app.models.model import Model
-from live.app.database.database import get_session
+from models.model import Model
+from database.database import get_session
 
 
 def get_model(modelid):
     with get_session() as session:
-        return session.query(Model).query(modelid).one_or_none()
+        return session.query(Model).where(Model.id == modelid).one_or_none()
 
-
-def save_model(path2model):
+    
+def get_model_by_name(modelname):
     with get_session() as session:
-        model = Model(path2model=path2model)
-        session.save(model)
+        return session.query(Model).where(Model.modelname == modelname).one_or_none()
+
+
+def save_model(path2model, name):
+    with get_session() as session:
+        model = Model(path2model=path2model, modelname=name)
+        session.add(model)
         session.commit()

@@ -16,5 +16,6 @@ def conn():
 
 
 def get_session():
-    with Session(engine) as session:
-        yield session
+    return SessionLocal()
+    #with Session(engine) as session:
+        #yield session

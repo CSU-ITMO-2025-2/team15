@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, LargeBinary
+from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float
 from database.database import Base, engine
 from datetime import datetime as dtime
 
@@ -6,18 +6,17 @@ from datetime import datetime as dtime
 class User(Base):
     __tablename__ = "susers"
     id = Column(Integer, primary_key=True, nullable=False)
-    login = Column(String)
+    login = Column(String, unique=True, nullable=False)
     email = Column(String)
-    role = Column(String)
+    role = Column(String, nullable=False)
+    password = Column(String, nullable=False)
 
-    def __init__(self, login, email, role):
+    def __init__(self, login, email, role, password: str):
         super().__init__()
         self.login = login
         self.email = email
         self.role = role
-
-    def __str__(self) -> str:
-        return self.login
+        self.password = password
 
 
 class Balance(Base):
@@ -61,40 +60,47 @@ class Data(Base):
     path2data = Column(String, nullable=False)
 
     def __init__(self, path2data):
+        super().__init__()
         self.path2data = path2data
 
 
 class Model(Base):
     __tablename__ = "model"
     id = Column(Integer, primary_key=True, nullable=False)
-    path2model = Column(String, nullable=False)
+    path2model = Column(String, unique=True, nullable=False)
+    modelname = Column(String, unique=True, nullable=False)
 
-    def __init__(self, path2model):
+    def __init__(self, modelname, path2model):
+        super().__init__()
         self.path2model = path2model
+        self.modelname = modelname
 
 
 class Task(Base):
     __tablename__ = "tasks"
     id = Column(Integer, primary_key=True, nullable=False)
     task_type = Column(String, nullable=False)
-    transaction_id = Column(Integer, ForeignKey("transactions.id"), nullable=False)
+    transaction_id = Column(Integer, ForeignKey("transactions.id"))
     userid = Column(Integer, ForeignKey("susers.id"), nullable=False)
     dataid = Column(Integer, ForeignKey("data.id"), nullable=False)
     modelid = Column(Integer, ForeignKey("model.id"), nullable=False)
-    processing_start = Column(Date, nullable=False)
+    created_at = Column(Date, nullable=False)
+    processing_start = Column(Date, nullable=True)
     processing_end = Column(Date)
     status = Column(String, nullable=False)
+    result = Column(Float, nullable=False)
 
     def __init__(
             self,
-            task_type,
-            transaction_id,
             userid,
             dataid,
             modelid,
-            processing_start,
-            processing_end,
-            status
+            status="init",
+            task_type="wine-score",
+            transaction_id=None,
+            processing_start=None,
+            processing_end=None,
+            result=None
     ):
         super().__init__()
         self.task_type = task_type,
@@ -105,6 +111,8 @@ class Task(Base):
         self.processing_start = processing_start
         self.processing_end = processing_end
         self.status = status
+        self.created_at = dtime.now()
+        self.result = result
 
 
 class History(Base):

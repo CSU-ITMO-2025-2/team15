@@ -1,5 +1,5 @@
-from live.app.database.database import get_session
-from live.app.models.model import Task
+from database.database import get_session
+from models.model import Task
 from datetime import datetime
 
 
@@ -23,9 +23,14 @@ def add_task(
     )
 
     with get_session() as session:
-        session.save(task)
+        session.add(task)
         session.commit()
 
+def set_result(taskid: int, value: float):
+    with get_session() as session:
+        new_state = {'result': value}
+        session.query(Task).where(Task.id == taskid).update(new_state)    
+        session.commit()
 
 def set_status(taskid: int, status: str):
     with get_session() as session:
