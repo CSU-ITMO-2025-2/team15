@@ -6,7 +6,7 @@ def add_balance(userid: int, amount: float):
     with get_session() as session:
         curren_balance = session.query(Balance).where(Balance.userId == userid).one_or_none()
         if curren_balance:
-            session.query(Balance).where(Balance.userId == userid).update({'amount': amount})
+            session.query(Balance).where(Balance.userId == userid).update({'amount': curren_balance.amount + amount})
         else:
             session.add(Balance(userid, amount))
             session.commit()

@@ -1,0 +1,69 @@
+from fastapi import APIRouter, HTTPException, Depends, status, Body
+from auth.hash_password import HashPassword
+from database.database import get_session
+from fastapi.security import OAuth2PasswordRequestForm
+from auth.jwt_handler import create_access_token
+from component import user_component as UserComponent
+from routes.dto.RegUserDto import NewUser, SuccessResponse, TokenResponse
+
+user_router = APIRouter(tags=["User"])
+hash_password = HashPassword()
+
+'''
+Реализовать интерфейс взаимодействия с системой - REST на FastAPI. 
+Интерфейс должен содержать весь базовый функционал системы: 
+- регистрация, авторизация
+'''
+
+EMAIL_EXISTS = HTTPException(
+    status_code=status.HTTP_409_CONFLICT,
+    detail="User with email provided exists already.",
+)
+
+REG_REQUEST_IS_BROKEN = HTTPException(
+    status_code=400,
+    detail="Login, Email and password must be filled",
+)
+
+USER_IS_NOT_EXIST = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
+)
+
+USER_CREDS_ARE_WRONG = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid details passed."
+)
+
+
+@user_router.post("/register", response_model=SuccessResponse)
+async def sign_new_user(
+        user: NewUser
+) -> SuccessResponse:
+    if UserComponent.get_user_email(user.email):
+        raise EMAIL_EXISTS
+
+    if user.login is None or user.email is None or user.password is None:
+        raise REG_REQUEST_IS_BROKEN
+
+    hashed_password = hash_password.create_hash(user.password)
+    user.password = hashed_password
+
+    UserComponent.add_client(
+        user.login, user.email, user.password
+    )
+
+    return SuccessResponse("User created successfully")
+
+
+@user_router.post("/signin", response_model=TokenResponse)
+async def sign_user_in(
+        user: OAuth2PasswordRequestForm = Depends()
+) -> dict:
+    user_exist = UserComponent.get_user_by_login(user.username)
+
+    if user_exist is None: raise USER_IS_NOT_EXIST
+
+    if hash_password.verify_hash(user.password, user_exist.password):
+        access_token = create_access_token(user_exist.login)
+        return {"access_token": access_token, "token_type": "Bearer"}
+
+    raise USER_CREDS_ARE_WRONG

@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database.database import conn
 from routes.state import state_router
+from routes.tasks import task_router
+from routes.data import dataframe_router
+from routes.balances import balance_router
+from routes.users import user_router
 
 app = FastAPI()
 
@@ -22,6 +26,10 @@ def on_startup():
     conn()
 
 
+app.include_router(user_router, prefix="/api/user")
+app.include_router(balance_router, prefix="/api/balance")
+app.include_router(dataframe_router, prefix="/api/df")
+app.include_router(task_router, prefix="/api/task")
 app.include_router(state_router, prefix="/api")
 
 if __name__ == "__main__":
