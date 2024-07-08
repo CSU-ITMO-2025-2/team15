@@ -58,10 +58,12 @@ class Data(Base):
     __tablename__ = "data"
     id = Column(Integer, primary_key=True, nullable=False)
     path2data = Column(String, nullable=False)
+    userid = Column(Integer, nullable=False)
 
-    def __init__(self, path2data):
+    def __init__(self, path2data: str, userid: int):
         super().__init__()
         self.path2data = path2data
+        self.userid = userid
 
 
 class Model(Base):

@@ -4,10 +4,10 @@ from datetime import datetime
 
 
 def add_task(
-        transaction_id: int,
         userid: int,
         dataid: int,
         modelid: int,
+        transaction_id: int = None,
         status: str = "wait",
         task_type: str = "default"
 ):
@@ -26,11 +26,18 @@ def add_task(
         session.add(task)
         session.commit()
 
+
+def get_task(task_id: int) -> Task:
+    with get_session() as session:
+        return session.query(Task).where(Task.id == task_id).one_or_none()
+
+
 def set_result(taskid: int, value: float):
     with get_session() as session:
         new_state = {'result': value}
-        session.query(Task).where(Task.id == taskid).update(new_state)    
+        session.query(Task).where(Task.id == taskid).update(new_state)
         session.commit()
+
 
 def set_status(taskid: int, status: str):
     with get_session() as session:

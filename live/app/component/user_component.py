@@ -2,12 +2,12 @@ from database.database import get_session
 from models.model import User
 
 
-def get_user_by_id(id: int):
+def get_user_by_id(id: int) -> User:
     with get_session() as session:
         return session.query(User).where(User.id == id).one_or_none()
 
 
-def get_user_by_login(login: str):
+def get_user_by_login(login: str) -> User:
     with get_session() as session:
         return session.query(User).where(User.login == login).one_or_none()
 
