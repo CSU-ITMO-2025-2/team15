@@ -2,6 +2,10 @@ from database.database import get_session
 from models.model import Task
 from datetime import datetime
 
+from component import data_component, model_component
+from ml.dto.PredictionRequest import PredictionRequest
+from ml.send_message import send_message
+
 
 def add_task(
         userid: int,
@@ -46,10 +50,17 @@ def set_status(taskid: int, status: str):
 
 
 def run(taskid: int):
-    with get_session() as session:
-        new_state = {'status': "in_progress", 'processing_start': datetime.now()}
-        session.query(Task).where(Task.id == taskid).update(new_state)
-        session.commit()
+    task = get_task(task_id=taskid)
+    data = data_component.get(task.dataid)
+    model = model_component.get_model(task.modelid)
+
+    request = PredictionRequest(
+        path2data=data.path2data,
+        namemodel=model.modelname,
+        task_id=taskid
+    )
+
+    send_message(request.model_dump_json())
 
 
 def final(taskid: int):

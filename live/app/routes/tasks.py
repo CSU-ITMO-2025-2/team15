@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from auth import authenticate
+# from auth.au import authenticate
 from component import task_compoenent as TaskComponent, user_component as UserComponent
 from component import transaction_component as TransactionComponent
 from routes.dto.TaskDto import TaskDto, HistoryDto
+
+from auth.authenticate import authenticate
 
 task_router = APIRouter(tags=["Task"])
 

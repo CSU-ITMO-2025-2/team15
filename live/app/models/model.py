@@ -90,7 +90,7 @@ class Task(Base):
     processing_start = Column(Date, nullable=True)
     processing_end = Column(Date)
     status = Column(String, nullable=False)
-    result = Column(Float, nullable=True)
+    result_id = Column(Float, nullable=True)
 
     def __init__(
             self,
@@ -102,7 +102,7 @@ class Task(Base):
             transaction_id=None,
             processing_start=None,
             processing_end=None,
-            result=None
+            result_id=None
     ):
         super().__init__()
         self.task_type = task_type,
@@ -114,7 +114,7 @@ class Task(Base):
         self.processing_end = processing_end
         self.status = status
         self.created_at = dtime.now()
-        self.result = result
+        self.result_id = result_id
 
 
 class History(Base):

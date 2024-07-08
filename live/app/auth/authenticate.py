@@ -1,9 +1,11 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+
 from auth.jwt_handler import verify_access_token
-from auth.cookieauth import OAuth2PasswordBearerWithCookie
+from component.cookie_auth import OAuth2PasswordBearerWithCookie
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/signin")
+
 
 async def authenticate(token: str = Depends(oauth2_scheme)) -> str:
     if not token:

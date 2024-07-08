@@ -20,11 +20,12 @@ def get(dataid: int) -> Data:
         return session.query(Data).where(Data.id == dataid).one_or_none()
 
 
-def save(df: DataFrame, userId: int):
+def save(df: DataFrame, userId: int) -> str:
     full_file_name = f"{BASE_PATH_2_DATA}{userId}{uuid.uuid4()}"
     df.to_csv(full_file_name)
 
     upload_data(full_file_name, userId)
+    return full_file_name
 
 
 def delete(dataid: int):

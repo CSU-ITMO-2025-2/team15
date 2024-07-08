@@ -6,7 +6,7 @@ class TaskDto(BaseModel):
     status: str
     datapath: str
 
-    def __init__(self, **data: Any):
+    def __init__(self, **data):
         super().__init__(**data)
         self.id = data["id"]
         self.status = data["status"]
@@ -18,7 +18,7 @@ class HistoryDto(BaseModel):
     operation: str
     datetime: str
 
-    def __init__(self, **data: Any):
+    def __init__(self, **data):
         super().__init__(**data)
         self.id = data["id"]
         self.operation = data["operation"]
