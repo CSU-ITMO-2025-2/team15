@@ -28,3 +28,9 @@ starlette~=0.36.3
 orjson~=3.9.15
 passlib==1.7.4
 python-multipart==0.0.9
+streamlit==1.33.0
+extra-streamlit-components==0.1.71
+#extra-streamlit-components-better-cookie-manager==0.0.10
+httpx==0.26.0
+watchdog==4.0.0
+streamlit-cookies-controller

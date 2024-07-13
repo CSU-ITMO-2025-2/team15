@@ -4,7 +4,7 @@ from datetime import datetime
 
 from component import data_component, model_component
 from ml.dto.PredictionRequest import PredictionRequest
-from ml.send_message import send_message
+from ml.rabbitapi import send_message2rabbit
 
 
 def add_task(
@@ -36,9 +36,14 @@ def get_task(task_id: int) -> Task:
         return session.query(Task).where(Task.id == task_id).one_or_none()
 
 
+def get_tasks(user_id: int) -> list[Task]:
+    with get_session() as session:
+        return session.query(Task).where(Task.userid == user_id).all()
+
+
 def set_result(taskid: int, value: float):
     with get_session() as session:
-        new_state = {'result': value}
+        new_state = {'result_id': value}
         session.query(Task).where(Task.id == taskid).update(new_state)
         session.commit()
 
@@ -57,10 +62,10 @@ def run(taskid: int):
     request = PredictionRequest(
         path2data=data.path2data,
         namemodel=model.modelname,
-        task_id=taskid
+        task_id=str(taskid)
     )
 
-    send_message(request.model_dump_json())
+    send_message2rabbit(request.model_dump_json())
 
 
 def final(taskid: int):

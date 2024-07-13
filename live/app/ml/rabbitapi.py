@@ -3,7 +3,7 @@ import uuid
 
 from decouple import config
 
-from ml.rmworkers import RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, RABBIT_URI_PARAM, RABBIT_QUEUE
+from ml.const import RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, RABBIT_URI_PARAM, RABBIT_QUEUE
 
 rabbitmq_connection_string = pika.ConnectionParameters(
     host=config(RABBIT_HOST),
@@ -18,17 +18,17 @@ rabbitmq_connection_string = pika.ConnectionParameters(
 )
 
 
-def send_message(message: str):
+def send_message2rabbit(message: str):
     response = None
     connection = pika.BlockingConnection(rabbitmq_connection_string)
     channel = connection.channel()
-    channel.queue_declare(queue=RABBIT_QUEUE)
+    queue_name = RABBIT_QUEUE
+    channel.queue_declare(queue=queue_name)
     result_queue = channel.queue_declare(queue='', exclusive=True).method.queue
     correlation_id = str(uuid.uuid4())
-
     channel.basic_publish(
         exchange='',
-        routing_key=RABBIT_QUEUE,
+        routing_key=queue_name,
         properties=pika.BasicProperties(reply_to=result_queue,
                                         correlation_id=correlation_id),
         body=message)

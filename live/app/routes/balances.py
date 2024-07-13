@@ -18,9 +18,14 @@ async def check_balance_by_user(user: str = Depends(authenticate)) -> BalanceDto
     user = UserComponent.get_user_by_login(user)
     balance = BalanceComponent.load_balance(user.id)
 
-    if balance:
-        return BalanceDto.from_orm(balance)
-    raise BALANCE_DOESNT_EXIST
+    if not balance:
+        BalanceComponent.add_balance(userid=user.id, amount=0.0)
+        balance = BalanceComponent.load_balance(userid=user.id)
+
+    return BalanceDto(
+        userId=user.id,
+        value=balance.value
+    )
 
 
 @balance_router.post("/replenish/{amount}")

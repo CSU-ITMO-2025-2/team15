@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database.database import conn
+from routes.history import history_router
 from routes.state import state_router
 from routes.tasks import task_router
 from routes.data import dataframe_router
@@ -30,6 +31,7 @@ app.include_router(user_router, prefix="/api/user")
 app.include_router(balance_router, prefix="/api/balance")
 app.include_router(dataframe_router, prefix="/api/df")
 app.include_router(task_router, prefix="/api/task")
+app.include_router(history_router, prefix="/api/history")
 app.include_router(state_router, prefix="/api")
 
 if __name__ == "__main__":

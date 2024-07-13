@@ -9,17 +9,13 @@ from pydantic import ValidationError
 import pickle
 import pandas as pd
 
-from component import model_component as ModelComponent, task_compoenent as TaskCompoenent, \
-    user_component as UserCompoenent, data_component as DataComponent
+from component import model_component as ModelComponent, \
+    user_component as UserCompoenent, data_component as DataComponent, task_compoenent as TaskCompoenent, \
+    balance_component, history_component
 
 from ml.dto.PredictionRequest import PredictionRequest
 
-RABBIT_URI_PARAM = "RABBITMQ_CONNECTION_URI"
-RABBIT_QUEUE = "inbound_requests"
-RABBIT_HOST = "RABBIT_HOST"
-RABBIT_PORT = "RABBIT_PORT"
-RABBIT_USER = "RABBIT_USER"
-RABBIT_PASSWORD = "RABBIT_PASSWORD"
+from ml.const import RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, RABBIT_QUEUE
 
 rabbitmq_connection_string = pika.ConnectionParameters(
     host=config(RABBIT_HOST),
@@ -35,6 +31,10 @@ rabbitmq_connection_string = pika.ConnectionParameters(
 
 MODEL_CACHE = {}
 
+connection = pika.BlockingConnection(rabbitmq_connection_string)
+channel = connection.channel()
+channel.queue_declare(queue=RABBIT_QUEUE)
+
 
 def prepare_data(ch, method, properties, body):
     try:
@@ -43,14 +43,13 @@ def prepare_data(ch, method, properties, body):
 
         make_prediction(ch, method, properties, request)
     except ValidationError as e:
-        response = f"Invalid data: {e}"
         correlation_id = properties.correlation_id
         reply_to = properties.reply_to
         ch.basic_publish(
             exchange='',
             routing_key=reply_to,
             properties=pika.BasicProperties(correlation_id=correlation_id),
-            body=response
+            body=str({"message": "some problevs"})
         )
 
 
@@ -65,18 +64,23 @@ def make_prediction(ch, method, properties, model_input: PredictionRequest):
     df = pd.read_csv(model_input.path2data)
     result = MODEL_CACHE[model_input.namemodel].predict(df)
 
-    save_results(ch, method, properties, model_input.task_id, result)
+    save_results(ch, method, properties, model_input.task_id, pd.DataFrame(result, columns=["result"]))
 
 
 def save_results(ch, method, properties, taskid: int, result: DataFrame):
     task = TaskCompoenent.get_task(taskid)
     user = UserCompoenent.get_user_by_id(task.userid)
 
-    fullpath2result = DataComponent.save(result, user.id)
+    fullpath2result = DataComponent.save_results(result, user.id)
     data = DataComponent.get_by_path(fullpath2result)
 
     TaskCompoenent.set_result(taskid, data.id)
+    balance_component.write_off(data.userid, 50.0)
+    history_component.push(data.userid, "write off for prediction",
+                           f"write off 1,0 RUB for prediction fo quality")
     TaskCompoenent.final(taskid)
+    history_component.push(data.userid, "finish task",
+                           f"Task {taskid} is done")
 
     return_results(ch, method, properties)
 
@@ -89,7 +93,7 @@ def return_results(ch, method, properties):
         exchange='',
         routing_key=reply_to,
         properties=pika.BasicProperties(correlation_id=correlation_id),
-        body={"message": "quality prediction is done"}
+        body=str({"message": "quality prediction is done"})
     )
 
 
@@ -97,13 +101,15 @@ def callback(ch, method, properties, body):
     prepare_data(ch, method, properties, body)
 
 
-def worker():
-    connection = pika.BlockingConnection(rabbitmq_connection_string)
-    channel = connection.channel()
-    channel.queue_declare(queue=RABBIT_QUEUE)
-    channel.basic_consume(queue=RABBIT_QUEUE, on_message_callback=callback, auto_ack=True)
+def start_consuming_ml():
+    channel.basic_consume(
+        queue=RABBIT_QUEUE,
+        on_message_callback=callback,
+        auto_ack=False,
+    )
+    print("Waiting for messages. To exit, press Ctrl+C")
     channel.start_consuming()
 
 
-for i in range(3):
-    threading.Thread(target=worker).start()
+if __name__ == "__main__":
+    start_consuming_ml()

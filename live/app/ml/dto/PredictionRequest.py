@@ -18,10 +18,20 @@ class WineParams(BaseModel):
         from_attributes = True
 
 
+class DataParams(BaseModel):
+    id: int
+    path: str
+    datetime: str
+
+    class Config:
+        from_attributes = True
+        coerce_numbers_to_str = True
+
+
 class PredictionRequest(BaseModel):
     path2data: str
     namemodel: str
-    task_id: str
+    task_id: int
 
     class Config:
         from_attributes = True

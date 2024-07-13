@@ -4,11 +4,13 @@ import click
 from component.balance_component import add_balance, load_balance
 from component.user_component import add_admin, add_client, get_user_by_login
 from database.database import get_session
+from ml.rabbitapi import send_message2rabbit
 from models.model import Task
 from component.data_component import get_by_path, upload_data
 from component.model_component import get_model_by_name, save_model
 
-from ml.send_message import send_message
+
+# from ml.rabbitapi import send_message2rabbit
 
 
 @click.group()
@@ -19,7 +21,7 @@ def cli():
 @cli.command()
 @click.option("-m", "--message")
 def send_prediction_message(message: str):
-    print("Message:", send_message(message))
+    print("Message:", send_message2rabbit(message))
 
 
 @cli.command()
