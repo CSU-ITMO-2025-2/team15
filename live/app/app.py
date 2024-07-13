@@ -35,4 +35,4 @@ app.include_router(history_router, prefix="/api/history")
 app.include_router(state_router, prefix="/api")
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8081, reload=True)

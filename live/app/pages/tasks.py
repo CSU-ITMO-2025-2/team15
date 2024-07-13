@@ -22,7 +22,7 @@ header = {"Authorization": "Bearer " + access_token, "Content-Type": "applicatio
 
 
 def download_tasks():
-    res = httpx.get(url=f"{config(BACKEND_HOST)}//api/task/all/", headers=header)
+    res = httpx.get(url=f"{config(BACKEND_HOST)}/api/task/all/", headers=header)
     return res
 
 
