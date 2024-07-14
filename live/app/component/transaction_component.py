@@ -11,8 +11,3 @@ def create_transaction(userid: int, operation_type: str, amount: float):
         )
         result = session.add(transaction)
         session.commit()
-
-
-def get_by_taskid(taskid: int) -> list[Transaction]:
-    with get_session() as session:
-        return session.query(Transaction).filter(Transaction.taskId == taskid).all()

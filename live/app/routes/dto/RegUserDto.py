@@ -1,3 +1,5 @@
+from typing import Union
+
 from pydantic import BaseModel
 
 
@@ -6,7 +8,7 @@ class NewUser(BaseModel):
     email: str
     password: str
 
-    def __init__(self, **data: Any):
+    def __init__(self, **data):
         super().__init__(**data)
         self.password = data["password"]
         self.email = data["email"]
@@ -14,18 +16,24 @@ class NewUser(BaseModel):
 
 
 class SuccessResponse(BaseModel):
-    message: str
+    message: Union[str, None] = None
 
-    def __init__(self, message: str, **data: Any):
+
+class SigninRequest(BaseModel):
+    login: Union[str, None] = None
+    password: Union[str, None] = None
+
+    def __init__(self, **data):
         super().__init__(**data)
-        self.message = message
+        self.password = data["password"]
+        self.login = data["login"]
 
 
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
 
-    def __init__(self, **data: Any):
+    def __init__(self, **data):
         super().__init__(**data)
         self.access_token = data['access_token']
         self.token_type = data['token_type']

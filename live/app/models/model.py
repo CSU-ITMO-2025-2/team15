@@ -59,11 +59,15 @@ class Data(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     path2data = Column(String, nullable=False)
     userid = Column(Integer, nullable=False)
+    datetime = Column(Date, nullable=False)
+    display = Column(Integer, nullable=False)
 
-    def __init__(self, path2data: str, userid: int):
+    def __init__(self, path2data: str, userid: int, datetime=dtime.now(), display: int = 1):
         super().__init__()
         self.path2data = path2data
         self.userid = userid
+        self.datetime = datetime
+        self.display = display
 
 
 class Model(Base):
@@ -90,7 +94,7 @@ class Task(Base):
     processing_start = Column(Date, nullable=True)
     processing_end = Column(Date)
     status = Column(String, nullable=False)
-    result = Column(Float, nullable=True)
+    result_id = Column(Float, nullable=True)
 
     def __init__(
             self,
@@ -102,7 +106,7 @@ class Task(Base):
             transaction_id=None,
             processing_start=None,
             processing_end=None,
-            result=None
+            result_id=None
     ):
         super().__init__()
         self.task_type = task_type,
@@ -114,14 +118,14 @@ class Task(Base):
         self.processing_end = processing_end
         self.status = status
         self.created_at = dtime.now()
-        self.result = result
+        self.result_id = result_id
 
 
 class History(Base):
     __tablename__ = "history"
     id = Column(Integer, primary_key=True, nullable=False)
     userid = Column(Integer, ForeignKey("susers.id"), nullable=False)
-    taskid = Column(Integer, ForeignKey("tasks.id"), nullable=False)
+    taskid = Column(Integer, ForeignKey("tasks.id"), nullable=True)
     operation_type = Column(String, nullable=False)
     datetime = Column(Date, nullable=False)
     details = Column(String, nullable=True)
@@ -129,8 +133,8 @@ class History(Base):
     def __init__(
             self,
             userid,
-            taskid,
             operation_type,
+            taskid=None,
             datetime=dtime.now(),
             details=""
     ):

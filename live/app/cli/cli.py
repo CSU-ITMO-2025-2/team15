@@ -4,14 +4,24 @@ import click
 from component.balance_component import add_balance, load_balance
 from component.user_component import add_admin, add_client, get_user_by_login
 from database.database import get_session
+from ml.rabbitapi import send_message2rabbit
 from models.model import Task
 from component.data_component import get_by_path, upload_data
 from component.model_component import get_model_by_name, save_model
 
 
+# from ml.rabbitapi import send_message2rabbit
+
+
 @click.group()
 def cli():
     pass
+
+
+@cli.command()
+@click.option("-m", "--message")
+def send_prediction_message(message: str):
+    print("Message:", send_message2rabbit(message))
 
 
 @cli.command()
@@ -49,18 +59,18 @@ def check_balance(login: str):
 @click.option("-l", "--login")
 @click.option("-d", "--path2file", default="/data/demo-client/winequality-red.csv")
 @click.option("-m", "--modelname", default="rfmodel")
-@click.option("-m", "--modelpath", default="/models/rfmodel.plk")
+@click.option("-m", "--modelpath", default="/models/rf_model.pkl")
 def add_task(
-            login: str,
-            path2file: str,
-            modelname: str,
-            modelpath: str
+        login: str,
+        path2file: str,
+        modelname: str,
+        modelpath: str
 ):
     with get_session() as session:
         user = get_user_by_login(login);
         data = get_by_path(path2file)
         if data is None:
-            upload_data(path2file)
+            upload_data(path2file, user.id)
             data = get_by_path(path2file)
 
         model = get_model_by_name(modelname)

@@ -18,6 +18,38 @@ services:
         condition: service_started
     restart: on-failure
 
+  webui:
+    build: ./live/app/
+    image: python3.9-slim:latest
+    env_file:
+      - ./live/app/.env
+    volumes:
+      - ./live/app:/app
+      - ./source/models:/models/
+      - ./source/data:/data/
+    command: streamlit run ./webui.py --server.port=8501 --server.address=0.0.0.0
+    depends_on:
+      app:
+        condition: service_started
+    restart: on-failure
+
+  worker:
+    build: ./live/app/
+    deploy:
+      mode: replicated
+      replicas: 3
+    env_file:
+      - ./live/app/.env
+    volumes:
+      - ./live/app:/app
+      - ./source/models:/models/
+      - ./source/data:/data/
+    command: python ml/rmworkers.py
+    depends_on:
+      app:
+        condition: service_started
+    restart: on-failure
+
   web-proxy:
     build: ./live/nginx
     ports:
