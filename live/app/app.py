@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database.database import conn
+from database.database import conn, init_db
 from routes.history import history_router
 from routes.state import state_router
 from routes.tasks import task_router
@@ -25,6 +25,7 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     conn()
+    init_db()
 
 
 app.include_router(user_router, prefix="/api/user")

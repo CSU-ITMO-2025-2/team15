@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Body
+from sqlmodel import Session
+
 from auth.hash_password import HashPassword
-from database.database import get_session
-from fastapi.security import OAuth2PasswordRequestForm
 from auth.jwt_handler import create_access_token
 from component import user_component as UserComponent
+from database.database import get_session
 from routes.dto.RegUserDto import NewUser, SuccessResponse, TokenResponse, SigninRequest
 
 user_router = APIRouter(tags=["User"])
@@ -36,9 +37,10 @@ USER_CREDS_ARE_WRONG = HTTPException(
 
 @user_router.post("/register", response_model=SuccessResponse)
 async def sign_new_user(
-        user: NewUser
+        user: NewUser,
+        session=Depends(get_session)
 ) -> SuccessResponse:
-    if UserComponent.get_user_email(user.email):
+    if UserComponent.get_user_email(user.email, session):
         raise EMAIL_EXISTS
 
     if user.login is None or user.email is None or user.password is None:
@@ -48,7 +50,7 @@ async def sign_new_user(
     user.password = hashed_password
 
     UserComponent.add_client(
-        user.login, user.email, user.password
+        user.login, user.email, user.password, session
     )
 
     return SuccessResponse(message="User created successfully.")
@@ -56,9 +58,10 @@ async def sign_new_user(
 
 @user_router.post("/signin", response_model=TokenResponse)
 async def sign_user_in(
-        request: SigninRequest
+        request: SigninRequest,
+        session=Depends(get_session)
 ) -> dict:
-    user_exist = UserComponent.get_user_by_login(request.login)
+    user_exist = UserComponent.get_user_by_login(request.login, session)
 
     if user_exist is None: raise USER_IS_NOT_EXIST
 

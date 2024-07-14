@@ -8,6 +8,7 @@ from pandas import DataFrame
 from pydantic import ValidationError
 import pickle
 import pandas as pd
+from sqlmodel import Session
 
 from component import model_component as ModelComponent, \
     user_component as UserCompoenent, data_component as DataComponent, task_compoenent as TaskCompoenent, \
@@ -67,18 +68,18 @@ def make_prediction(ch, method, properties, model_input: PredictionRequest):
     save_results(ch, method, properties, model_input.task_id, pd.DataFrame(result, columns=["result"]))
 
 
-def save_results(ch, method, properties, taskid: int, result: DataFrame):
-    task = TaskCompoenent.get_task(taskid)
-    user = UserCompoenent.get_user_by_id(task.userid)
+def save_results(ch, method, properties, taskid: int, result: DataFrame, session: Session):
+    task = TaskCompoenent.get_task(taskid, session)
+    user = UserCompoenent.get_user_by_id(task.userid, session)
 
-    fullpath2result = DataComponent.save_results(result, user.id)
-    data = DataComponent.get_by_path(fullpath2result)
+    fullpath2result = DataComponent.save_results(result, user.id, session)
+    data = DataComponent.get_by_path(fullpath2result, session)
 
-    TaskCompoenent.set_result(taskid, data.id)
-    balance_component.write_off(data.userid, 50.0)
+    TaskCompoenent.set_result(taskid, data.id, session)
+    balance_component.write_off(data.userid, 50.0, session)
     history_component.push(data.userid, "write off for prediction",
-                           f"write off 1,0 RUB for prediction fo quality")
-    TaskCompoenent.final(taskid)
+                           f"write off 1,0 RUB for prediction fo quality", session)
+    TaskCompoenent.final(taskid, session)
     history_component.push(data.userid, "finish task",
                            f"Task {taskid} is done")
 

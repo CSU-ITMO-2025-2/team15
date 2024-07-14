@@ -7,3 +7,4 @@ rabbitmqdata
 .vscode
 /source
 .DS_Store
+testing.db

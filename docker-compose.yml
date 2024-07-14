@@ -31,6 +31,8 @@ services:
     depends_on:
       app:
         condition: service_started
+      rabbitmq:
+        condition: service_started
     restart: on-failure
 
   worker:
@@ -47,6 +49,8 @@ services:
     command: python ml/rmworkers.py
     depends_on:
       app:
+        condition: service_started
+      rabbitmq:
         condition: service_started
     restart: on-failure
 
