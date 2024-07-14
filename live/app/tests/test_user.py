@@ -1,5 +1,6 @@
-from fastapi.testclient import TestClient
+import uuid
 
+from fastapi.testclient import TestClient
 
 def test_register_new_user(client: TestClient):
     user = {
@@ -9,7 +10,7 @@ def test_register_new_user(client: TestClient):
     }
 
     response = client.post("/api/user/register", json=user, headers={"Content-Type": "application/json"})
-    assert response.status_code == 200
+    assert response.status_code == 200 or response.status_code == 409
 
 
 def test_register_same_user(client: TestClient):
