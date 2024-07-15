@@ -11,11 +11,15 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+async def init_db():
+    Base.metadata.create_all(bind=engine)
+
+
 def conn():
     SQLModel.metadata.create_all(engine)
 
 
 def get_session():
     return SessionLocal()
-    #with Session(engine) as session:
-        #yield session
+    # with Session(engine) as session:
+    # yield session

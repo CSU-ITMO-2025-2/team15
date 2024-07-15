@@ -34,3 +34,5 @@ extra-streamlit-components==0.1.71
 httpx==0.26.0
 watchdog==4.0.0
 streamlit-cookies-controller
+pytest==8.1.1
+bcrypt

@@ -1,3 +1,5 @@
+from sqlmodel import Session
+
 from database.database import get_session
 from models.model import Task
 from datetime import datetime
@@ -13,45 +15,45 @@ def add_task(
         modelid: int,
         transaction_id: int = None,
         status: str = "wait",
-        task_type: str = "default"
+        task_type: str = "default",
+        session: Session = get_session()
 ):
     task = Task(
-        task_type=task_type,
+        task_type=str(task_type),
         transaction_id=transaction_id,
-        userid=userid,
-        dataid=dataid,
-        modelid=modelid,
-        status=status,
+        userid=int(userid),
+        dataid=int(dataid),
+        modelid=int(modelid),
+        status=str(status),
         processing_end=None,
         processing_start=None
     )
 
-    with get_session() as session:
-        session.add(task)
-        session.commit()
+    session.add(task)
+    session.commit()
 
 
-def get_task(task_id: int) -> Task:
-    with get_session() as session:
-        return session.query(Task).where(Task.id == task_id).one_or_none()
+def get_task(task_id: int,
+             session: Session = get_session()) -> Task:
+    return session.query(Task).where(Task.id == task_id).one_or_none()
 
 
-def get_tasks(user_id: int) -> list[Task]:
-    with get_session() as session:
-        return session.query(Task).where(Task.userid == user_id).all()
+def get_tasks(user_id: int,
+              session: Session = get_session()) -> list[Task]:
+    return session.query(Task).where(Task.userid == user_id).all()
 
 
-def set_result(taskid: int, value: float):
-    with get_session() as session:
-        new_state = {'result_id': value}
-        session.query(Task).where(Task.id == taskid).update(new_state)
-        session.commit()
+def set_result(taskid: int, value: float,
+               session: Session = get_session()):
+    new_state = {'result_id': value}
+    session.query(Task).where(Task.id == taskid).update(new_state)
+    session.commit()
 
 
-def set_status(taskid: int, status: str):
-    with get_session() as session:
-        new_state = {'status': status}
-        session.query(Task).where(Task.id == taskid).update(new_state)
+def set_status(taskid: int, status: str,
+               session: Session = get_session()):
+    new_state = {'status': status}
+    session.query(Task).where(Task.id == taskid).update(new_state)
 
 
 def run(taskid: int):
@@ -68,8 +70,8 @@ def run(taskid: int):
     send_message2rabbit(request.model_dump_json())
 
 
-def final(taskid: int):
-    with get_session() as session:
-        new_state = {'status': "finished", 'processing_end': datetime.now()}
-        session.query(Task).where(Task.id == taskid).update(new_state)
-        session.commit()
+def final(taskid: int,
+          session: Session = get_session()):
+    new_state = {'status': "finished", 'processing_end': datetime.now()}
+    session.query(Task).where(Task.id == taskid).update(new_state)
+    session.commit()

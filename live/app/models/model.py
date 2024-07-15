@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float
+from sqlalchemy import Column, Text, String, Integer, Date, ForeignKey, Float
 from database.database import Base, engine
 from datetime import datetime as dtime
 
@@ -85,7 +85,7 @@ class Model(Base):
 class Task(Base):
     __tablename__ = "tasks"
     id = Column(Integer, primary_key=True, nullable=False)
-    task_type = Column(String, nullable=False)
+    task_type = Column(Text, nullable=False)
     transaction_id = Column(Integer, ForeignKey("transactions.id"))
     userid = Column(Integer, ForeignKey("susers.id"), nullable=False)
     dataid = Column(Integer, ForeignKey("data.id"), nullable=False)

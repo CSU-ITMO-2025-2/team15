@@ -35,14 +35,6 @@ def refill_user_balance():
     return response.json()
 
 
-def create_task(data_id: int):
-    data = {"userid": user_id, "user_df_id": data_id}
-    res = httpx.post(
-        url=f"{config(BACKEND_HOST)}/create/data/{data_id}/model/1", json=data, headers=header
-    )
-    return res
-
-
 with st.form("Balance form"):
     st.subheader("Your Balance")
     balance = get_user_balance()["value"]
