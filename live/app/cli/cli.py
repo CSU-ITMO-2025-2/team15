@@ -50,7 +50,7 @@ def increase_balance(login: str, amount: float, session: Session = get_session()
 @click.option("-l", "--login")
 def check_balance(login: str, session: Session = get_session()):
     user = get_user_by_login(login, session=session)
-    balance = load_balance(user.id)
+    balance = load_balance(user.id, session=session)
     if balance:
         print(f"{user.login}:", balance.value)
     else:

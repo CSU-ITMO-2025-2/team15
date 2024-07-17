@@ -38,6 +38,10 @@ if data_response.status_code != 200:
 else:
     c_id, c_task_status, c_task_data, c_run = st.columns([0.5, 1, 3, 1], gap="small")
     with st.container():
+        c_id.write("ID")
+        c_task_data.write("Data name")
+        c_task_status.write("Status")
+        c_run.write("Prediction result")
         for i in data_response.json():
 
             task_id = i["id"]

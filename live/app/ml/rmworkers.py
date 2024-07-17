@@ -13,6 +13,7 @@ from sqlmodel import Session
 from component import model_component as ModelComponent, \
     user_component as UserCompoenent, data_component as DataComponent, task_compoenent as TaskCompoenent, \
     balance_component, history_component
+from database.database import get_session
 
 from ml.dto.PredictionRequest import PredictionRequest
 
@@ -54,7 +55,7 @@ def prepare_data(ch, method, properties, body):
         )
 
 
-def make_prediction(ch, method, properties, model_input: PredictionRequest):
+def make_prediction(ch, method, properties, model_input: PredictionRequest, session: Session = get_session()):
     if model_input.namemodel not in MODEL_CACHE:
         model_entity = ModelComponent.get_model_by_name(model_input.namemodel)
 
@@ -65,7 +66,7 @@ def make_prediction(ch, method, properties, model_input: PredictionRequest):
     df = pd.read_csv(model_input.path2data)
     result = MODEL_CACHE[model_input.namemodel].predict(df)
 
-    save_results(ch, method, properties, model_input.task_id, pd.DataFrame(result, columns=["result"]))
+    save_results(ch, method, properties, model_input.task_id, pd.DataFrame(result, columns=["result"]), session=session)
 
 
 def save_results(ch, method, properties, taskid: int, result: DataFrame, session: Session):
