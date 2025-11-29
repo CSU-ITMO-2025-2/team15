@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  # --- НАСТРОЙКИ ДЛЯ POSTGRES (Без них база не стартует) ---
+  POSTGRES_DB: {{ .Values.postgres.auth.db }}
+  POSTGRES_USER: {{ .Values.postgres.auth.user }}
+  # Внимание: Host для базы тут не нужен, база сама знает, что она localhost внутри пода.
+  # Но другим сервисам он нужен:
+  POSTGRES_HOST: "{{ .Release.Name }}-postgres"
+
+  # --- НАСТРОЙКИ ДЛЯ PYTHON APP (Твои переменные из .env) ---
+  RABBIT_HOST: "{{ .Release.Name }}-rabbitmq"
+  RABBIT_PORT: "5672"
+  RABBIT_QUEUE: "message"
+
+  COOKIE_NAME: "cookie_name"
+  DATA_ROOT_PATH: "/data"
+
+  BACKEND_HOST: "http://{{ .Release.Name }}-app:80"

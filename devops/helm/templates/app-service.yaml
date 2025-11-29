@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-app
+spec:
+  ports:
+    - port: 80
+      targetPort: 8081 # Поменяй на порт, на котором реально работает app.py
+  selector:
+    app: main-app

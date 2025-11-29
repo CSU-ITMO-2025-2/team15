@@ -1,0 +1,27 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          # Маршрут на WebUI
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-webui
+                port:
+                  number: 8501
+          # Маршрут на API (если нужно)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-app
+                port:
+                  number: 80
+{{- end }}
