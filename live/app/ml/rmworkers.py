@@ -1,7 +1,4 @@
-import uuid
-
 import pika
-import threading
 
 from decouple import config
 from pandas import DataFrame
