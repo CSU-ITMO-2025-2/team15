@@ -5,7 +5,6 @@ rabbitmq
 postgresdata
 rabbitmqdata
 .vscode
-/source
 .DS_Store
 testing.db
 live/app/tests/data/

@@ -35,4 +35,4 @@ httpx==0.26.0
 watchdog==4.0.0
 streamlit-cookies-controller
 pytest==8.1.1
-bcrypt
+bcrypt==4.3.0

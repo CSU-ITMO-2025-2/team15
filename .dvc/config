@@ -5,3 +5,5 @@
     url = s3://a-kozachuk/
     use_ssl = false
     endpointurl = http://194.180.188.67:9020
+    access_key_id = ReH9IRQlAx9tJrP2qkvC
+    secret_access_key = KO2wGKtXQFTvip7qoRV83h7odlagpY4VnjGO0M79
