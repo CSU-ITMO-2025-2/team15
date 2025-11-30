@@ -5,6 +5,6 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 8081 # Поменяй на порт, на котором реально работает app.py
+      targetPort: 8081
   selector:
     app: main-app

@@ -1,61 +1,37 @@
-# Настройки для твоих Python сервисов (App, WebUI, Worker)
-# Предполагаем, что они используют один образ
 image:
   repository: kursornn/wine-detector
-  tag: v2
+  tag: v3
   pullPolicy: IfNotPresent
 
-# Настройки масштабирования воркера
 worker:
-  replicas: 3
+  replicas: 1
 
-# Настройки RabbitMQ
 rabbitmq:
   image: rabbitmq:3.13.3-management
   auth:
     username: admin
     password: admin
 
-# Настройки Postgres
 postgres:
   image: postgres:13.3
   auth:
-    db: productdb
-    user: postgres
-    password: postgres
-  persistence:
-    size: 1Gi
-    storageClass: "" # Оставь пустым для стандартного класса
+    db: team15_db
+    user: team15
+    password: Gy4pVhT6#b9Dc1wM
+  port: 18809
+  host: 79.174.89.43
 
-# Настройки Ingress (вместо Nginx)
 ingress:
   enabled: true
-  host: team15.194.58.110.43.nip.io
+  host: team15.89.108.100.29.nip.io
+  className: nginx
 
 resources:
-  # Основные контейнеры (Python, Java, и т.д.)
   main:
-    requests:
-      cpu: 100m      # 0.1 ядра
-      memory: 128Mi  # 128 Мб
-    limits:
-      cpu: 500m      # 0.5 ядра (не больше!)
-      memory: 512Mi  # 512 Мб
-
-  # Тяжелые контейнеры (База данных)
-  db:
     requests:
       cpu: 200m
       memory: 256Mi
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 200m
+      memory: 256Mi
 
-  # Легкие контейнеры (Init-скрипты, busybox)
-  tiny:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi

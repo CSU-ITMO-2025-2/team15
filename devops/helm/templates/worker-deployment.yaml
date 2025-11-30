@@ -12,12 +12,6 @@ spec:
       labels:
         app: worker
     spec:
-      initContainers:
-        - name: wait-for-postgres
-          image: busybox:latest
-          resources:
-{{ toYaml .Values.resources.tiny | indent 12 }}
-          command: [ 'sh', '-c', "until nc -z {{ .Release.Name }}-postgres 5432; do echo waiting for postgres; sleep 2; done" ]
       containers:
         - name: worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -30,26 +24,3 @@ spec:
                 name: {{ .Release.Name }}-config
             - secretRef:
                 name: {{ .Release.Name }}-secrets
-          volumeMounts:
-            # Монтируем наш диск в папку /data
-            - mountPath: /data
-              name: shared-data-volume
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - main-app
-                      - worker
-                      - webui
-              topologyKey: "kubernetes.io/hostname"
-
-        # Тут можно добавить livenessProbe / readinessProbe
-      volumes:
-        # Объявляем диск, ссылаясь на созданный PVC
-        - name: shared-data-volume
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-shared-data

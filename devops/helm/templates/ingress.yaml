@@ -3,12 +3,19 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className | default "nginx" }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    nginx.ingress.kubernetes.io/websocket-services: "{{ .Release.Name }}-webui"
+
 spec:
+  ingressClassName: {{ .Values.ingress.className | default "nginx" }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          # Маршрут на WebUI
           - path: /
             pathType: Prefix
             backend:
@@ -16,7 +23,6 @@ spec:
                 name: {{ .Release.Name }}-webui
                 port:
                   number: 8501
-          # Маршрут на API (если нужно)
           - path: /api
             pathType: Prefix
             backend:

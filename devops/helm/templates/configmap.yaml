@@ -3,14 +3,11 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
-  # --- НАСТРОЙКИ ДЛЯ POSTGRES (Без них база не стартует) ---
-  POSTGRES_DB: {{ .Values.postgres.auth.db }}
-  POSTGRES_USER: {{ .Values.postgres.auth.user }}
-  # Внимание: Host для базы тут не нужен, база сама знает, что она localhost внутри пода.
-  # Но другим сервисам он нужен:
-  POSTGRES_HOST: "{{ .Release.Name }}-postgres"
+  POSTGRES_DB: "{{ .Values.postgres.auth.db }}"
+  POSTGRES_USER: "{{ .Values.postgres.auth.user }}"
+  POSTGRES_HOST: "{{ .Values.postgres.host }}"
+  POSTGRES_PORT: "{{ .Values.postgres.port }}"
 
-  # --- НАСТРОЙКИ ДЛЯ PYTHON APP (Твои переменные из .env) ---
   RABBIT_HOST: "{{ .Release.Name }}-rabbitmq"
   RABBIT_PORT: "5672"
   RABBIT_QUEUE: "message"
