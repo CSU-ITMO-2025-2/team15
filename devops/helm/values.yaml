@@ -4,7 +4,7 @@ image:
   pullPolicy: IfNotPresent
 
 worker:
-  replicas: 2
+  replicas: 4
 
 rabbitmq:
   image: rabbitmq:3.13.3-management
