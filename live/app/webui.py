@@ -5,7 +5,7 @@ import httpx
 import extra_streamlit_components as stx
 from decouple import config
 from streamlit_cookies_controller import CookieController
-
+import time
 from ml.const import BACKEND_HOST
 from pages.common.navigation import make_sidebar
 
@@ -57,11 +57,15 @@ with tab1:
         result = password_entered()
         if result.status_code in [401, 404]:
             error_desc = result.json()["detail"]
+            val = result.json()["access_token"]
+            cookie_manager.set("access_token", '')
             st.write(f"{error_desc}")
         else:
             val = result.json()["access_token"]
             cookie_manager.set("access_token", val)
             st.success("Logged in successfully!")
+
+            time.sleep(1)
 
             st.switch_page("pages/profile.py")
 
