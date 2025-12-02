@@ -3,16 +3,17 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from decouple import config
-
+from streamlit_cookies_controller import CookieController
 from auth.jwt_handler import verify_access_token
 from ml.const import BACKEND_HOST
 from pages.common.navigation import make_sidebar
-from webui import cookie_manager
+#from webui import cookie_manager
 
 make_sidebar()
 
 st.title("Profile")
 
+cookie_manager = CookieController()
 access_token = cookie_manager.get("access_token")
 print(access_token)
 if not access_token:
