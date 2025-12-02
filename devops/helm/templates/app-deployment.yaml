@@ -19,8 +19,28 @@ spec:
 {{ toYaml .Values.resources.main | indent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ "python", "app.py" ]
+          env:
+            - name: CONNECTION_URI
+              valueFrom:
+                secretKeyRef:
+                  name: database-pass
+                  key: CONNECTION_URL
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-pass
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-pass
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-pass
+                  key: SECRET_KEY
+
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
-            - secretRef:
-                name: {{ .Release.Name }}-secrets

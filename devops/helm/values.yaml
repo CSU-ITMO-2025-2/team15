@@ -1,6 +1,6 @@
 image:
   repository: kursornn/wine-detector
-  tag: v6
+  tag: v7
   pullPolicy: IfNotPresent
 
 worker:
@@ -14,10 +14,10 @@ rabbitmq:
 
 postgres:
   image: postgres:13.3
-  auth:
-    db: team15_db
-    user: team15
-    password: Gy4pVhT6#b9Dc1wM
+  #auth:
+    #db: team15_db
+    #user: team15
+    #password: Gy4pVhT6#b9Dc1wM
   port: 18809
   host: 79.174.89.43
 

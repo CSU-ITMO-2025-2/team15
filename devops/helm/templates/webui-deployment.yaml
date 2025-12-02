@@ -21,8 +21,12 @@ spec:
           command: [ "streamlit", "run", "./webui.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableCORS=false", "--server.enableXsrfProtection=false" ]
           ports:
             - containerPort: 8501
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-pass
+                  key: SECRET_KEY
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
-            - secretRef:
-                name: {{ .Release.Name }}-secrets
