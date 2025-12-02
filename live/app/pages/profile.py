@@ -14,6 +14,7 @@ make_sidebar()
 st.title("Profile")
 
 access_token = cookie_manager.get("access_token")
+print(access_token)
 if not access_token:
     st.switch_page("webui.py")
 
