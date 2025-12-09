@@ -1,6 +1,6 @@
 image:
   repository: kursornn/wine-detector
-  tag: v15
+  tag: v16
   pullPolicy: IfNotPresent
 
 worker:
