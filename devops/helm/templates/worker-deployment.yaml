@@ -6,10 +6,7 @@ spec:
   replicas: {{ .Values.worker.replicas }}
   revisionHistoryLimit: 3
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+    type: Recreate
   selector:
     matchLabels:
       app: worker
@@ -50,23 +47,11 @@ spec:
             - configMapRef:
                 name: {{ .Release.Name }}-config
           # --- PROBES ---
-          startupProbe:
-            httpGet:
-              path: /health
-              port: 8081
-            failureThreshold: 10
-            periodSeconds: 3
-          # 2. Проверка, что приложение не зависло
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8081
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          # 3. Проверка, готово ли принимать трафик
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8081
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ps aux | grep rmworkers.py
+            initialDelaySeconds: 30
+            periodSeconds: 60

@@ -53,21 +53,21 @@ spec:
           # --- PROBES ---
           startupProbe:
             httpGet:
-              path: /health
+              path: /api/probe
               port: 8081
             failureThreshold: 10
             periodSeconds: 3
           # 2. Проверка, что приложение не зависло
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/liveness
               port: 8081
             initialDelaySeconds: 5
             periodSeconds: 10
           # 3. Проверка, готово ли принимать трафик
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/readiness
               port: 8081
             initialDelaySeconds: 5
             periodSeconds: 10
