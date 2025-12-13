@@ -1,13 +1,17 @@
+import logging
+
 import pika
-import uuid
-
 from decouple import config
-
 from ml.const import RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, RABBIT_URI_PARAM, RABBIT_QUEUE
 
-rabbitmq_connection_string = pika.ConnectionParameters(
+logger = logging.getLogger(__name__)
+
+# 1. ИСПРАВЛЕНИЕ: cast=int
+# config() возвращает строку, а pika ждет число (int) для порта.
+# Без этого будет TypeError.
+rabbitmq_params = pika.ConnectionParameters(
     host=config(RABBIT_HOST),
-    port=config(RABBIT_PORT),
+    port=config(RABBIT_PORT, cast=int),
     virtual_host='/',
     credentials=pika.PlainCredentials(
         username=config(RABBIT_USER),
@@ -19,28 +23,28 @@ rabbitmq_connection_string = pika.ConnectionParameters(
 
 
 def send_message2rabbit(message: str):
-    response = None
-    connection = pika.BlockingConnection(rabbitmq_connection_string)
-    channel = connection.channel()
-    queue_name = RABBIT_QUEUE
-    channel.queue_declare(queue=queue_name)
-    result_queue = channel.queue_declare(queue='', exclusive=True).method.queue
-    correlation_id = str(uuid.uuid4())
-    channel.basic_publish(
-        exchange='',
-        routing_key=queue_name,
-        properties=pika.BasicProperties(reply_to=result_queue,
-                                        correlation_id=correlation_id),
-        body=message)
+  try:
+    # 2. ИСПРАВЛЕНИЕ: Передаем объект rabbitmq_params
+    with pika.BlockingConnection(rabbitmq_params) as connection:
+      channel = connection.channel()
+      queue_name = RABBIT_QUEUE
 
-    def on_response(ch, method, properties, body):
-        if properties.correlation_id == correlation_id:
-            channel.basic_cancel(consumer_tag=consumer_tag)
-            channel.queue_delete(queue=result_queue)
-            connection.close()
-            nonlocal response
-            response = body.decode('utf-8')
+      channel.queue_declare(queue=queue_name, durable=False)
 
-    consumer_tag = channel.basic_consume(queue=result_queue, on_message_callback=on_response, auto_ack=True)
-    channel.start_consuming()
-    return response
+      channel.basic_publish(
+          exchange='',
+          routing_key=queue_name,
+          body=message.encode('utf-8'),
+          properties=pika.BasicProperties(
+              delivery_mode=pika.DeliveryMode.Persistent,
+              content_type='text/plain'
+          )
+      )
+      logger.info(f"Сообщение отправлено в {queue_name}")
+
+  except pika.exceptions.UnroutableError:
+    logger.error("Сообщение не может быть доставлено (нет маршрута)")
+  except pika.exceptions.AMQPError as e:
+    logger.error(f"Ошибка RabbitMQ: {e}")
+  except Exception as e:
+    logger.error(f"Непредвиденная ошибка: {e}")

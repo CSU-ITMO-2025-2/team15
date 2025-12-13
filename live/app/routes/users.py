@@ -6,6 +6,7 @@ from auth.jwt_handler import create_access_token
 from component import user_component as UserComponent
 from database.database import get_session
 from routes.dto.RegUserDto import NewUser, SuccessResponse, TokenResponse, SigninRequest
+from utils import transaction
 
 user_router = APIRouter(tags=["User"])
 hash_password = HashPassword()
@@ -34,7 +35,7 @@ USER_CREDS_ARE_WRONG = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid details passed."
 )
 
-
+@transaction
 @user_router.post("/register", response_model=SuccessResponse)
 async def sign_new_user(
         user: NewUser,
@@ -55,7 +56,7 @@ async def sign_new_user(
 
     return SuccessResponse(message="User created successfully.")
 
-
+@transaction
 @user_router.post("/signin", response_model=TokenResponse)
 async def sign_user_in(
         request: SigninRequest,

@@ -28,33 +28,36 @@ def send_prediction_message(message: str):
 @click.option("-p", "--password")
 @click.option("-e", "--email")
 @click.option("-r", "--role")
-def create_user(login: str, password: str, email: str, role: str, session: Session = get_session()):
-    existed_user = get_user_by_login(login, session)
-    if existed_user: return
+def create_user(login: str, password: str, email: str, role: str):
+    with get_session() as session:
+        existed_user = get_user_by_login(login, session)
+        if existed_user: return
 
-    if role == "admin":
-        add_admin(login, email, password, session=session)
-    else:
-        add_client(login, email, password, session=session)
+        if role == "admin":
+            add_admin(login, email, password, session=session)
+        else:
+            add_client(login, email, password, session=session)
 
 
 @cli.command()
 @click.option("-l", "--login")
 @click.option("-a", "--amount", default=0)
-def increase_balance(login: str, amount: float, session: Session = get_session()):
-    user = get_user_by_login(login, session=session)
-    add_balance(user.id, amount)
+def increase_balance(login: str, amount: float):
+    with get_session() as session:
+        user = get_user_by_login(login, session=session)
+        add_balance(user.id, amount)
 
 
 @cli.command()
 @click.option("-l", "--login")
-def check_balance(login: str, session: Session = get_session()):
-    user = get_user_by_login(login, session=session)
-    balance = load_balance(user.id, session=session)
-    if balance:
-        print(f"{user.login}:", balance.value)
-    else:
-        print(f"{user.login}: 0")
+def check_balance(login: str):
+    with get_session() as session:
+        user = get_user_by_login(login, session=session)
+        balance = load_balance(user.id, session=session)
+        if balance:
+            print(f"{user.login}:", balance.value)
+        else:
+            print(f"{user.login}: 0")
 
 
 @cli.command()
@@ -66,30 +69,30 @@ def add_task(
         login: str,
         path2file: str,
         modelname: str,
-        modelpath: str,
-        session: Session = get_session()
+        modelpath: str
 ):
-    user = get_user_by_login(login, session=session)
-    data = get_by_path(path2file)
-    if data is None:
-        upload_data(path2file, user.id)
+    with get_session() as session:
+        user = get_user_by_login(login, session=session)
         data = get_by_path(path2file)
+        if data is None:
+            upload_data(path2file, user.id)
+            data = get_by_path(path2file)
 
-    model = get_model_by_name(modelname)
-    if model is None:
-        save_model(modelpath, modelname)
         model = get_model_by_name(modelname)
+        if model is None:
+            save_model(modelpath, modelname)
+            model = get_model_by_name(modelname)
 
-    task = Task(
-        task_type="wine-score",
-        userid=user.id,
-        dataid=data.id,
-        modelid=model.id,
-        status="init"
-    )
+        task = Task(
+            task_type="wine-score",
+            userid=user.id,
+            dataid=data.id,
+            modelid=model.id,
+            status="init"
+        )
 
-    session.add(task)
-    session.commit()
+        session.add(task)
+        session.commit()
 
 
 if __name__ == "__main__":

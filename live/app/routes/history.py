@@ -2,6 +2,7 @@ import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
+from utils import transaction
 # from auth.au import authenticate
 from component import task_compoenent as TaskComponent, user_component as UserComponent, data_component, \
     history_component, user_component
@@ -13,7 +14,7 @@ from auth.authenticate import authenticate
 
 history_router = APIRouter(tags=["Hisotry"])
 
-
+@transaction
 @history_router.get("/all/")
 async def task_history(
         user: str = Depends(authenticate),
