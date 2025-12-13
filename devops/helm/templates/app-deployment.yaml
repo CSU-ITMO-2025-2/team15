@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-app
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: main-app

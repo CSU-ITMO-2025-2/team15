@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-worker
 spec:
   replicas: {{ .Values.worker.replicas }}
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: worker
