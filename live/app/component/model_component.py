@@ -1,19 +1,18 @@
+from sqlmodel import Session
+
 from models.model import Model
-from database.database import get_session
 
 
-def get_model(modelid) -> Model:
-    with get_session() as session:
-        return session.query(Model).where(Model.id == modelid).one_or_none()
-
-    
-def get_model_by_name(modelname) -> Model:
-    with get_session() as session:
-        return session.query(Model).where(Model.modelname == modelname).one_or_none()
+def get_model(modelid, session: Session) -> Model:
+  return session.query(Model).where(Model.id == modelid).one_or_none()
 
 
-def save_model(path2model, name) -> Model:
-    with get_session() as session:
-        model = Model(path2model=path2model, modelname=name)
-        session.add(model)
-        session.commit()
+def get_model_by_name(modelname, session: Session) -> Model:
+  return session.query(Model).where(
+      Model.modelname == modelname).one_or_none()
+
+
+def save_model(path2model, name, session: Session) -> Model:
+  model = Model(path2model=path2model, modelname=name)
+  session.add(model)
+  session.commit()

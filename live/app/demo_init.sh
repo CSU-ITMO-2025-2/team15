@@ -11,4 +11,4 @@ echo "Add check client balance"
 python ./cli/cli.py check-balance --login demo-client
 
 echo "Add tasks for demo-user"
-python ./cli/cli.py add-task -l demo-clientq
+python ./cli/cli.py add-task -l demo-client
