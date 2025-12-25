@@ -1,0 +1,6 @@
+apiVersion: v2
+name: team15-k8s-project
+description: A Helm chart for my practice course
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

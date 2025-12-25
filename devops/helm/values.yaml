@@ -1,0 +1,37 @@
+image:
+  repository: kursornn/wine-detector
+  tag: v6
+  pullPolicy: IfNotPresent
+
+worker:
+  replicas: 4
+
+rabbitmq:
+  image: rabbitmq:3.13.3-management
+  auth:
+    username: admin
+    password: admin
+
+postgres:
+  image: postgres:13.3
+  auth:
+    db: team15_db
+    user: team15
+    password: Gy4pVhT6#b9Dc1wM
+  port: 18809
+  host: 79.174.89.43
+
+ingress:
+  enabled: true
+  host: team15.89.108.100.29.nip.io
+  className: nginx
+
+resources:
+  main:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
