@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  POSTGRES_DB: "{{ .Values.postgres.auth.db }}"
+  POSTGRES_USER: "{{ .Values.postgres.auth.user }}"
+  POSTGRES_HOST: "{{ .Values.postgres.host }}"
+  POSTGRES_PORT: "{{ .Values.postgres.port }}"
+
+  RABBIT_HOST: "{{ .Release.Name }}-rabbitmq"
+  RABBIT_PORT: "5672"
+  RABBIT_QUEUE: "message"
+
+  COOKIE_NAME: "cookie_name"
+  DATA_ROOT_PATH: "/data"
+
+  BACKEND_HOST: "http://{{ .Release.Name }}-app:80"
