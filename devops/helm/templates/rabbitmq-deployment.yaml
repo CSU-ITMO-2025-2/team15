@@ -19,6 +19,12 @@ spec:
           ports:
             - containerPort: 5672
             - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-pass
+                  key: RABBITMQ_DEFAULT_USER
           envFrom:
             - secretRef:
-                name: {{ .Release.Name }}-secrets
+                name: rabbitmq-pass
