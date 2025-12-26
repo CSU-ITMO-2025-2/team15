@@ -23,7 +23,7 @@ postgres:
 
 ingress:
   enabled: true
-  host: team15.89.108.100.29.nip.io
+  host: team15.kubepractice.ru
   className: nginx
 
 resources:
@@ -34,4 +34,11 @@ resources:
     limits:
       cpu: 200m
       memory: 256Mi
+  rabbitmq:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
 
