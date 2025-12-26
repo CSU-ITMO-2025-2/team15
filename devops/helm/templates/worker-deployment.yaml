@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-worker
 spec:
   replicas: {{ .Values.worker.replicas }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: worker
@@ -43,3 +46,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ps aux | grep rmworkers.py
+            initialDelaySeconds: 30
+            periodSeconds: 60
