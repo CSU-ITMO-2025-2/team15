@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "48c6072a-c794-417a-946c-e01cbbc20f68",
+		"name": "K8S",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1783728"
+	},
+	"item": [
+		{
+			"name": "Create and run",
+			"item": [
+				{
+					"name": "Create Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://team15.kubepractice.ru/api/task/create/data/63/model/1//",
+							"protocol": "https",
+							"host": [
+								"team15",
+								"kubepractice",
+								"ru"
+							],
+							"path": [
+								"api",
+								"task",
+								"create",
+								"data",
+								"63",
+								"model",
+								"1",
+								"",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Execute",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://team15.kubepractice.ru/api/task/execute/82//",
+							"protocol": "http",
+							"host": [
+								"team15",
+								"kubepractice",
+								"ru"
+							],
+							"path": [
+								"api",
+								"task",
+								"execute",
+								"82",
+								"",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json(); // Парсим JSON-ответ",
+							"let token = jsonData.access_token; // Извлекаем токен",
+							"",
+							"if (token) {",
+							"    pm.globals.set(\"access_token\", token); // Сохраняем токен в глобальную переменную",
+							"    console.log(\"Токен сохранён в глобальной переменной 'access_token'\", token);",
+							"} else {",
+							"    console.error(\"Токен не найден в ответе\");",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test\",\n    \"password\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://team15.kubepractice.ru:/api/user/signin",
+					"protocol": "http",
+					"host": [
+						"team15",
+						"kubepractice",
+						"ru"
+					],
+					"port": "",
+					"path": [
+						"api",
+						"user",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "access_token",
+						"value": "{{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://team15.kubepractice.ru/api/task/all//",
+					"protocol": "http",
+					"host": [
+						"team15",
+						"kubepractice",
+						"ru"
+					],
+					"path": [
+						"api",
+						"task",
+						"all",
+						"",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "loop_counter",
+			"value": ""
+		}
+	]
+}
