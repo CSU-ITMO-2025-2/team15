@@ -29,16 +29,16 @@ ingress:
 resources:
   main:
     requests:
-      cpu: 200m
+      cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 200m
+      cpu: 100m
       memory: 256Mi
   rabbitmq:
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 512Mi
     limits:
-      cpu: 500m
+      cpu: 100m
       memory: 1Gi
 

@@ -1,4 +1,3 @@
-
 import concurrent.futures
 import sys
 import time
@@ -91,7 +90,7 @@ def main():
 
   duration = time.time() - start_time
   print(
-    f"Готово! Создано: {successful_creates}/{total_requests} за {duration:.2f} сек.")
+      f"Готово! Создано: {successful_creates}/{total_requests} за {duration:.2f} сек.")
 
   # 3. Получение списка
   print("\n--- 3. ПОЛУЧЕНИЕ СПИСКА ЗАДАЧ ---")
