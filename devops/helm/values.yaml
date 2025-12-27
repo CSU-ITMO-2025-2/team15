@@ -14,10 +14,10 @@ rabbitmq:
 
 postgres:
   image: postgres:13.3
-  #auth:
+    #auth:
     #db: team15_db
-    #user: team15
-    #password: Gy4pVhT6#b9Dc1wM
+  #user: team15
+  #password: Gy4pVhT6#b9Dc1wM
   port: 18809
   host: 79.174.89.43
 
@@ -42,3 +42,23 @@ resources:
       cpu: 100m
       memory: 1Gi
 
+monitoring:
+  enabled: true
+
+kube-prometheus-stack:
+  grafana:
+    enabled: false
+
+  alertmanager:
+    enabled: false
+
+  prometheus:
+    prometheusSpec:
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: "standard"
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 10Gi

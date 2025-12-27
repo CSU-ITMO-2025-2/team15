@@ -4,3 +4,8 @@ description: A Helm chart for my practice course
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
+dependencies:
+  - name: kube-prometheus-stack
+    version: 80.6.0
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: monitoring.enabled
