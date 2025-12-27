@@ -14,7 +14,7 @@ spec:
       app: main-app
 
   endpoints:
-    - port: {{ .Release.Name }}-app
+    - port: {{ .Release.Name }}-base-port
       path: /metrics
       interval: 30s
       scrapeTimeout: 10s

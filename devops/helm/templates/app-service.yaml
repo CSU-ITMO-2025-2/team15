@@ -4,7 +4,8 @@ metadata:
   name: {{ .Release.Name }}-app
 spec:
   ports:
-    - port: 80
+    - name: {{ .Release.Name }}-base-port
+      port: 80
       targetPort: 8081
   selector:
     app: main-app
