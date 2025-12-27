@@ -39,7 +39,8 @@ def get_task(task_id: int,
 
 def get_tasks(user_id: int,
     session: Session) -> list[Task]:
-  return session.query(Task).where(Task.userid == user_id).all()
+  return session.query(Task).where((Task.userid == user_id) &
+                                   (Task.status == "init")).all()
 
 
 def set_result(taskid: int, value: float,
