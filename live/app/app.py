@@ -13,7 +13,7 @@ from routes.users import user_router
 
 app = FastAPI()
 
-Instrumentator().instrument(app).expose(app)
+instrumentator = Instrumentator().instrument(app)
 
 origins = ["*"]
 app.add_middleware(
@@ -28,7 +28,9 @@ app.add_middleware(
 @app.on_event("startup")
 async def on_startup():
   conn()
+  instrumentator.expose(app)
   await init_db()
+  print("Metrics exposed!")
 
 
 @app.middleware("http")
