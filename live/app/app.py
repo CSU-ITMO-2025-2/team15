@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from database.database import conn, init_db, db_session
 from routes.balances import balance_router
@@ -11,6 +12,8 @@ from routes.tasks import task_router
 from routes.users import user_router
 
 app = FastAPI()
+
+Instrumentator().instrument(app).expose(app)
 
 origins = ["*"]
 app.add_middleware(

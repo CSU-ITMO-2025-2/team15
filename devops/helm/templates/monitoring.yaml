@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-monitoring
+  namespace: {{ .Release.Namespace | default "team15-ns" }}
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app: main-app
+
+  endpoints:
+    - port: {{ .Release.Name }}-app
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
