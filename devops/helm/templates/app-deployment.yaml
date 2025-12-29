@@ -56,7 +56,8 @@ spec:
             httpGet:
               path: /api/probe
               port: 8081
-            failureThreshold: 10
+            initialDelaySeconds: 10
+            failureThreshold: 20
             periodSeconds: 3
           livenessProbe:
             httpGet:

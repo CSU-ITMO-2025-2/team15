@@ -53,5 +53,6 @@ spec:
             httpGet:
               path: /_stcore/health
               port: 8501
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
